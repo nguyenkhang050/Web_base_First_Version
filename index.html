@@ -4,63 +4,63 @@
 
 <hr>
 
-
+<link href="style.css" rel="stylesheet" type="text/css" />
 <script src="javascript/jquery.min.js"></script>
 <script src="javascript/RGraph/RGraph.common.core.js"></script>
 <script src="javascript/RGraph/RGraph.gauge.js"></script>
-<script src="javascript/RGraph/RGraph.common.effects.js" ></script>
-<script src="javascript/RGraph/RGraph.line.js" ></script>
+<script src="javascript/RGraph/RGraph.common.effects.js"></script>
+<script src="javascript/RGraph/RGraph.line.js"></script>
 
 <script>
     let gauge;
     let canvas;
     let obj = null;
-    let data      = [];
+    let data = [];
     const numvalues = 1200;
 
     window.onload = function () {
 
         gauge = new RGraph.Gauge('cvs', 0, 100, 84)
-                .set('scale.decimals', 0)
-                .set('tickmarks.small', 50)
-                .set('tickmarks.big', 5)
-                .set('title.top', 'Temperature')
-                .set('title.top.size', 24)
-                .set('title.top.pos', 0.15)
-                .set('title.bottom', 'm³')
-                .set('title.bottom.color', '#aaa')
-                .set('border.outer', 'Gradient(white:white:white:white:white:white:white:white:white:white:#aaa)')
-                .draw();
+            .set('scale.decimals', 0)
+            .set('tickmarks.small', 50)
+            .set('tickmarks.big', 5)
+            .set('title.top', 'Temperature')
+            .set('title.top.size', 24)
+            .set('title.top.pos', 0.15)
+            .set('title.bottom', 'm³')
+            .set('title.bottom.color', '#aaa')
+            .set('border.outer', 'Gradient(white:white:white:white:white:white:white:white:white:white:#aaa)')
+            .draw();
 
 
-        canvas    = document.getElementById("cvs_graph");
+        canvas = document.getElementById("cvs_graph");
 
         function prepare_graph() {
 
-                obj = new RGraph.Line('cvs_graph', [])
-                    .set('title.vpos', 0.5)
-                    .set('title.yaxis.pos', 0.5)
-                    .set('colors', ['black'])
-                    .set('linewidth',0.75)
-                    .set('yaxispos', 'right')
-                    .set('ymax', 100)
-                    .set('xticks', 25)
-                    .set('numyticks', 0)
-                    .set('numxticks', 0)
-                    .set('background.grid', true)
-                    .set('tickmarks', true)
-                    .set('shadow', false)
-                    .set('gutter.top', 5)
-                    .set('gutter.bottom', 5);
+            obj = new RGraph.Line('cvs_graph', [])
+                .set('title.vpos', 0.5)
+                .set('title.yaxis.pos', 0.5)
+                .set('colors', ['black'])
+                .set('linewidth', 0.75)
+                .set('yaxispos', 'right')
+                .set('ymax', 100)
+                .set('xticks', 25)
+                .set('numyticks', 0)
+                .set('numxticks', 0)
+                .set('background.grid', true)
+                .set('tickmarks', true)
+                .set('shadow', false)
+                .set('gutter.top', 5)
+                .set('gutter.bottom', 5);
 
 
-                // Pre-pad the arrays with null values
-                for (let i=0; i<numvalues; ++i) { data.push(null); }
+            // Pre-pad the arrays with null values
+            for (let i = 0; i < numvalues; ++i) { data.push(null); }
 
         }
         prepare_graph();
     }
-    function drawGraph (value,timestamp) {
+    function drawGraph(value, timestamp) {
         if (!obj) return;
         RGraph.Clear(canvas);
 
@@ -82,6 +82,102 @@
 <div id="field"></div>
 <div id="content"></div>
 <div id="info"></div>
+<!------------------------------------------------------------------------------------------------->
+<section id="section">
+</section>
+
+<section>
+    <div class="card1">
+        <center>
+            <span class="cartesian">X: <strong><span id="xText">0</span></strong></span>
+            <br>
+            <span class="cartesian">Y: <strong><span id="yText">100</span></strong></span>
+            <br>
+            <span class="cartesian">Z: <strong><span id="zText">50</span></strong></span>
+            <br>
+            <span class="cartesian">Roll: <strong><span id="rollText">180</span></strong></span>
+            <br>
+            <span class="cartesian">Pitch: <strong><span id="pitchText">0</span></strong></span>
+            <br>
+            <span class="cartesian">Yaw: <strong><span id="yawText">163</span></strong></span>
+            <br>
+        </center>
+    </div>
+
+    <div class="card1">
+        <center>
+            <span class="joint">J1 <strong><span id="j1Text">0</span></strong></span>
+            <br>
+            <span class="joint">J2: <strong><span id="j2Text">0</span></strong></span>
+            <br>
+            <span class="joint">J3: <strong><span id="j3Text">50</span></strong></span>
+            <br>
+            <span class="joint">J4: <strong><span id="j4Text">180</span></strong></span>
+            <br>
+        </center>
+    </div>
+</section>
+
+<script>
+    const main = document.getElementById("section");
+    const statusBar = [
+        {
+            name: "Tool Number",
+            value: 0,
+            img: "img/tool.png"
+        },
+        {
+            name: "Jogging Speed",
+            value: 0,
+            img: "img/speed.png"
+        },
+        {
+            name: "Coordinate System",
+            value: 0,
+            img: "img/coordinate.png"
+        },
+        {
+            name: "Servo Status",
+            value: 0,
+            img: "img/servo_status.png"
+        },
+        {
+            name: "System Status",
+            value: 0,
+            img: "img/system_status.png"
+        },
+        {
+            name: "Lock/Unlock Controller",
+            value: 0,
+            img: "img/lock.png"
+        },
+        {
+            name: "Mode",
+            value: 0,
+            img: "img/teach.png"
+        },
+        {
+            name: "Security Level",
+            value: 0,
+            img: "img/security.png"
+        },
+    ]
+
+    statusBar.forEach(element => {
+        const div_card = document.createElement('div');
+        div_card.innerHTML = `
+  <div class="row">
+    <div class="column">
+      <div class="card">
+        <center><img src=${element["img"]} class="thumbnail"></center>
+        <h3>${element["name"]}</h3>
+    </div>
+  </div>
+  `
+        main.appendChild(div_card);
+    })
+</script>
+<!------------------------------------------------------------------------------------------------->
 <script src='/socket.io/socket.io.js'></script>
 <script>
 
@@ -89,20 +185,29 @@
     const sendButton = document.getElementById("send");
     const content = document.getElementById("content");
     const info = document.getElementById("info");
-    
+
     const messages = [];
-    
+
     const socket = io.connect('http://localhost:3700');
 
     socket.on('message', function (data) {
         gauge.value = data.value;
         gauge.draw();
         gauge.set('title.top', data.browseName);
-        info.innerHTML = "nodeId= " + data.nodeId + " timestamp= "+ data.timestamp;
+        info.innerHTML = "nodeId= " + data.nodeId + " timestamp= " + data.timestamp;
         drawGraph(data.value);
+        xText.innerText = Math.round((data.value + Number.EPSILON) * 100) / 100;
+    });
+
+    socket.on('message1', function (data) {
+        //gauge.value = data.value;
+        //gauge.draw();
+        //gauge.set('title.top', data.browseName);
+        //info.innerHTML = "nodeId= " + data.nodeId + " timestamp= " + data.timestamp;
+        //drawGraph(data.value);
+        yText.innerText = Math.round((data.value + Number.EPSILON) * 100) / 100;
     });
 
 </script>
-
 
 

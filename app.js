@@ -8,10 +8,18 @@ const { AttributeIds, OPCUAClient, TimestampsToReturn } = require("node-opcua");
 
 const hostname = require("os").hostname().toLowerCase();
 // const endpointUrl = "opc.tcp://" + hostname + ":26543/UA/SampleServer";
-const endpointUrl = "opc.tcp://opcuademo.sterfive.com:26543/UA/SampleServer";
-const nodeIdToMonitor = "ns=1;s=Temperature";
+const endpointUrl = "opc.tcp://localhost:4880/";
+//const endpointUrl = "opc.tcp://opcuademo.sterfive.com:26543/UA/SampleServer";
+const nodeIdToMonitor = "ns=4;s=Robot1/Temperature";
+
+/* --------------------------------------------------------------------- */
+const node1IdToMonitor = "ns=4;s=Robot1/Position";
+/* --------------------------------------------------------------------- */
+
 
 let client, session, subscription;
+/* --------------------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
 
 async function createOPCUAClient(io) {
   client = OPCUAClient.create({
@@ -36,6 +44,30 @@ async function createOPCUAClient(io) {
     priority: 10,
   });
 
+    /* --------------------------------------------------------------------- */
+    
+    var nodesToWrite = [{
+        nodeId: "ns=4;s=Robot2/theta1",
+        attributeId: AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: "Double",
+                value: 20
+            }
+        }
+    }];
+    session.write(nodesToWrite, function (err, statusCode, diagnosticInfo) {
+        if (!err) {
+            console.log(" write ok");
+            console.log(nodesToWrite[0])
+            console.log(diagnosticInfo);
+            console.log(statusCode);
+        }
+    });
+
+    /* --------------------------------------------------------------------- */
+
   subscription
     .on("keepalive", function () {
       console.log("keepalive");
@@ -47,7 +79,15 @@ async function createOPCUAClient(io) {
   const itemToMonitor = {
     nodeId: nodeIdToMonitor,
     attributeId: AttributeIds.Value,
-  };
+    };
+
+    /* --------------------------------------------------------------------- */
+  const item1ToMonitor = {
+    nodeId: node1IdToMonitor,
+    attributeId: AttributeIds.Value,
+    };     
+    /* --------------------------------------------------------------------- */
+
   const parameters = {
     samplingInterval: 100,
     discardOldest: true,
@@ -57,10 +97,19 @@ async function createOPCUAClient(io) {
     itemToMonitor,
     parameters,
     TimestampsToReturn.Both
-  );
+    );
 
-  monitoredItem.on("changed", (dataValue) => {
-    console.log(dataValue.value.toString());
+    /* --------------------------------------------------------------------- */
+  const monitoredItem1 = await subscription.monitor(
+    item1ToMonitor,
+    parameters,
+    TimestampsToReturn.Both
+    );
+    /* --------------------------------------------------------------------- */
+
+
+    monitoredItem.on("changed", (dataValue) => {
+    console.log("Temperature: " + dataValue.value.toString());
     io.sockets.emit("message", {
       value: dataValue.value.value,
       timestamp: dataValue.serverTimestamp,
@@ -68,6 +117,19 @@ async function createOPCUAClient(io) {
       browseName: "Temperature",
     });
   });
+
+    /* --------------------------------------------------------------------- */
+    monitoredItem1.on("changed", (dataValue) => {
+        console.log("Position: " + dataValue.value.toString());
+        io.sockets.emit("message1", {
+            value: dataValue.value.value,
+            timestamp: dataValue.serverTimestamp,
+            nodeId: node1IdToMonitor,
+            browseName: "Position",
+        });
+    });
+    /* --------------------------------------------------------------------- */
+
 }
 
 async function stopOPCUAClient() {
